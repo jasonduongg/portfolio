@@ -113,7 +113,7 @@ export default function ProjectsPage() {
                         {activeProject !== null && (
                             <>
                                 <span className="text-4xl text-gray-600">&gt;</span>
-                                <span className="text-4xl text-white uppercase">
+                                <span className="text-4xl text-orange-500 uppercase">
                                     {projectData.projects[activeCategory][activeProject].title}
                                 </span>
                             </>
@@ -224,11 +224,11 @@ export default function ProjectsPage() {
                         <div className="bg-gray-900/80 p-8 rounded-lg h-full flex items-start">
                             <div>
                                 <h2 className="text-3xl font-bold text-white mb-2">{projectData.projects[activeCategory][activeProject].role}</h2>
-                                <div className="flex flex-wrap items-center gap-4">
+                                <div className="flex flex-wrap items-center gap-4 mb-2">
                                     <span className="text-orange-400 font-semibold">{projectData.projects[activeCategory][activeProject].title}</span>
                                     <span className="text-gray-400">{projectData.projects[activeCategory][activeProject].date}</span>
                                 </div>
-                                <p className="text-gray-300 whitespace-pre-wrap font-sans text-base">{projectData.projects[activeCategory][activeProject].description}</p>
+                                <p className="text-gray-300 whitespace-pre-wrap font-montserrat text-base">{projectData.projects[activeCategory][activeProject].description}</p>
                             </div>
                         </div>
                     </div>
