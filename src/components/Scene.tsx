@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, PerspectiveCamera, SpotLight } from '@react-three/drei';
 import { useRef, useState, useEffect } from 'react';
 import { PerspectiveCamera as PerspectiveCameraImpl } from 'three';
-import type { Vector3 } from 'three';
+import { Vector3 } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Monitor from './Monitor';
 import Room from './Room';
@@ -48,6 +48,8 @@ function FreeFormCamera() {
     const controlsRef = useRef<OrbitControlsImpl | null>(null);
     const rotationCount = useRef(0);
     const lastRotationTime = useRef(Date.now());
+    const moveSpeed = 0.1;
+    const keysPressed = useRef(new Set<string>());
 
     useEffect(() => {
         if (!controlsRef.current) return;
@@ -58,8 +60,8 @@ function FreeFormCamera() {
         controlsRef.current.screenSpacePanning = false;
         controlsRef.current.minDistance = 1;
         controlsRef.current.maxDistance = 20;
-        controlsRef.current.maxPolarAngle = Math.PI / 2; // Limit vertical rotation
-        controlsRef.current.minPolarAngle = 0; // Prevent going below ground
+        controlsRef.current.maxPolarAngle = Math.PI / 2;
+        controlsRef.current.minPolarAngle = 0;
         controlsRef.current.rotateSpeed = 0.3;
         controlsRef.current.enableRotate = true;
         controlsRef.current.enablePan = true;
@@ -75,6 +77,11 @@ function FreeFormCamera() {
             if (e.key.toLowerCase() === 'r') {
                 resetCamera();
             }
+            keysPressed.current.add(e.key.toLowerCase());
+        };
+
+        const handleKeyUp = (e: KeyboardEvent) => {
+            keysPressed.current.delete(e.key.toLowerCase());
         };
 
         // Add mouse event listeners to track rotation
@@ -92,11 +99,13 @@ function FreeFormCamera() {
         };
 
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
         document.addEventListener('mousedown', handleMouseDown);
         document.addEventListener('mousemove', handleMouseMove);
 
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keyup', handleKeyUp);
             document.removeEventListener('mousedown', handleMouseDown);
             document.removeEventListener('mousemove', handleMouseMove);
             if (controlsRef.current) {
@@ -128,10 +137,42 @@ function FreeFormCamera() {
     };
 
     useFrame(() => {
-        if (!controlsRef.current) return;
+        if (!controlsRef.current || !camera) return;
 
         // Update controls
         controlsRef.current.update();
+
+        // Handle WASD movement
+        const moveVector = new Vector3();
+        const cameraDirection = new Vector3();
+        camera.getWorldDirection(cameraDirection);
+        const cameraRight = new Vector3().crossVectors(cameraDirection, new Vector3(0, 1, 0)).normalize();
+
+        if (keysPressed.current.has('w')) {
+            moveVector.add(cameraDirection);
+        }
+        if (keysPressed.current.has('s')) {
+            moveVector.sub(cameraDirection);
+        }
+        if (keysPressed.current.has('a')) {
+            moveVector.sub(cameraRight);
+        }
+        if (keysPressed.current.has('d')) {
+            moveVector.add(cameraRight);
+        }
+        // Add vertical movement
+        if (keysPressed.current.has(' ')) { // Space
+            moveVector.add(new Vector3(0, 1, 0));
+        }
+        if (keysPressed.current.has('shift')) {
+            moveVector.add(new Vector3(0, -1, 0));
+        }
+
+        if (moveVector.length() > 0) {
+            moveVector.normalize().multiplyScalar(moveSpeed);
+            camera.position.add(moveVector);
+            controlsRef.current.target.add(moveVector);
+        }
 
         // Check if camera is stuck
         if (controlsRef.current.enableRotate) {
@@ -182,11 +223,50 @@ export default function Scene() {
             <div className="absolute top-4 right-4 z-10 flex gap-2">
                 <button
                     onClick={() => handleViewChange(!isFreeForm)}
-                    className="bg-white/80 hover:bg-white px-4 py-2 rounded-lg shadow-lg transition-colors"
+                    className="bg-white/80 hover:bg-white px-4 py-2 rounded-lg shadow-lg transition-colors text-black"
                 >
                     {isFreeForm ? 'Switch to Animated View' : 'Switch to Free View'}
                 </button>
             </div>
+            {isFreeForm && (
+                <div className="absolute top-4 left-4 z-10 bg-white/80 p-4 rounded-lg shadow-lg text-black">
+                    <h3 className="font-semibold mb-2">Controls</h3>
+                    <div className="space-y-1 text-sm">
+                        <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-gray-200 rounded">W</kbd>
+                            <span>Move Forward</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-gray-200 rounded">S</kbd>
+                            <span>Move Backward</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-gray-200 rounded">A</kbd>
+                            <span>Move Left</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-gray-200 rounded">D</kbd>
+                            <span>Move Right</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-gray-200 rounded">Space</kbd>
+                            <span>Move Up</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-gray-200 rounded">Shift</kbd>
+                            <span>Move Down</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-gray-200 rounded">R</kbd>
+                            <span>Reset Camera</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-gray-200 rounded">Mouse</kbd>
+                            <span>Look Around</span>
+                        </div>
+                    </div>
+                </div>
+            )}
             <Canvas shadows>
                 {!isFreeForm ? (
                     <>
