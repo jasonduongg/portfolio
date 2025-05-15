@@ -9,6 +9,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Monitor from './Monitor';
 import Room from './Room';
 import ResumePaper from './ResumePaper';
+import Flashlight from './Flashlight';
 
 function CameraAnimation() {
     const cameraRef = useRef<PerspectiveCameraImpl>(null);
@@ -17,17 +18,17 @@ function CameraAnimation() {
     const startPosition: [number, number, number] = [0, 0, 3]; // Reduced from 5 to 3 for a shorter pan
 
     useEffect(() => {
-        // Reset animation after 4 seconds
-        const timer = setTimeout(() => setStartAnimation(false), 4000);
+        // Reset animation after 1 second
+        const timer = setTimeout(() => setStartAnimation(false), 2000);
         return () => clearTimeout(timer);
     }, []);
 
     useFrame(() => {
         if (startAnimation && cameraRef.current) {
-            // Slower interpolation for smoother pan
-            cameraRef.current.position.x += (targetPosition[0] - cameraRef.current.position.x) * 0.05;
-            cameraRef.current.position.y += (targetPosition[1] - cameraRef.current.position.y) * 0.05;
-            cameraRef.current.position.z += (targetPosition[2] - cameraRef.current.position.z) * 0.05;
+            // Smoother interpolation with easing
+            cameraRef.current.position.x += (targetPosition[0] - cameraRef.current.position.x) * 0.04;
+            cameraRef.current.position.y += (targetPosition[1] - cameraRef.current.position.y) * 0.08;
+            cameraRef.current.position.z += (targetPosition[2] - cameraRef.current.position.z) * 0.08;
         }
     });
 
@@ -197,6 +198,7 @@ export default function Scene() {
                             </>
                         )}
                         <Room onLightChange={handleLightChange} lightsOn={lightsOn} isFreeForm={isFreeForm} />
+                        <Flashlight enabled={!lightsOn} />
                     </>
                 ) : (
                     <>
@@ -223,6 +225,7 @@ export default function Scene() {
                             </>
                         )}
                         <Room onLightChange={handleLightChange} lightsOn={lightsOn} isFreeForm={isFreeForm} />
+                        <Flashlight enabled={!lightsOn} />
                     </>
                 )}
             </Canvas>

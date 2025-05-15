@@ -223,7 +223,7 @@ export default function Monitor({ position = [0, 0, -1] }: MonitorProps) {
             const easedProgress = cameraProgress * cameraProgress; // Quadratic easing for slower start
 
             // Move camera forward and up
-            const targetZ = initialCameraZ.current - (1.65 * easedProgress);
+            const targetZ = initialCameraZ.current - (1.20 * easedProgress);
             const targetY = initialCameraY.current + (0.25 * easedProgress);
 
             // Slower interpolation

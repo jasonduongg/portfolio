@@ -6,7 +6,7 @@ import { Text } from '@react-three/drei';
 const RAY_LENGTH = 1.2;
 const RAY_RADIUS = 0.03;
 const CENTER_SPHERE_RADIUS = 0.22;
-const BURST_DISTANCE = 3; // Increased from 1.2 to create a more dramatic zoom effect
+const BURST_DISTANCE = 1.5; // Reduced from 3 to keep the burst effect more contained
 export const SHOOT_DURATION = 5; // seconds
 const RAY_ANIMATION_DURATION = 0.7; // seconds each ray animates outward
 const MAX_RAYS = 200; // Increased from 120 to create more rays
