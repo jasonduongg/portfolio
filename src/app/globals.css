@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'SAO UI';
+  src: url('/fonts/SAOUI-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SAO UI';
+  src: url('/fonts/SAOUI-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-sao: 'SAO UI', Arial, Helvetica, sans-serif;
 }
 
 @theme inline {
@@ -22,5 +37,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sao);
 }

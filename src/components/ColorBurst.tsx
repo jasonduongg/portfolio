@@ -101,7 +101,12 @@ export function ColorBurst({ onComplete, onProgress }: ColorBurstProps) {
                 return (
                     <mesh key={ray.id} position={[x, y, z]} quaternion={quaternion}>
                         <cylinderGeometry args={[RAY_RADIUS, RAY_RADIUS, length, 24]} />
-                        <meshStandardMaterial color={ray.color} />
+                        <meshStandardMaterial
+                            color={ray.color}
+                            emissive={ray.color}
+                            emissiveIntensity={0.8}
+                            toneMapped={false}
+                        />
                     </mesh>
                 );
             })}

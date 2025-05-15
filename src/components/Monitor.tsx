@@ -41,6 +41,7 @@ function Button({ position, text, onClick, isHovered, onHover }: { position: [nu
                 color={isHovered ? "#ffffff" : "#00ff00"}
                 anchorX="center"
                 anchorY="middle"
+                font="/fonts/SAOUI-Regular.otf"
             >
                 {text}
             </Text>
@@ -102,6 +103,7 @@ function BrowserChrome({ position }: { position: [number, number, number] }) {
                     color="#000000"
                     anchorX="left"
                     anchorY="middle"
+                    font="/fonts/SAOUI-Regular.otf"
                 >
                     jasonduong.dev
                 </Text>
