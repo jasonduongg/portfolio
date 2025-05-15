@@ -22,10 +22,10 @@ function CameraAnimation() {
 
     useFrame(() => {
         if (startAnimation && cameraRef.current) {
-            // Slower interpolation (reduced from 0.05 to 0.02)
-            cameraRef.current.position.x += (targetPosition[0] - cameraRef.current.position.x) * 0.02;
-            cameraRef.current.position.y += (targetPosition[1] - cameraRef.current.position.y) * 0.02;
-            cameraRef.current.position.z += (targetPosition[2] - cameraRef.current.position.z) * 0.02;
+            // Faster interpolation (increased from 0.02 to 0.1)
+            cameraRef.current.position.x += (targetPosition[0] - cameraRef.current.position.x) * 0.1;
+            cameraRef.current.position.y += (targetPosition[1] - cameraRef.current.position.y) * 0.1;
+            cameraRef.current.position.z += (targetPosition[2] - cameraRef.current.position.z) * 0.1;
         }
     });
 
@@ -43,6 +43,10 @@ export default function Scene() {
     const [isFreeForm, setIsFreeForm] = useState(false);
     const [lightsOn, setLightsOn] = useState(true);
 
+    const handleLightChange = (isOn: boolean) => {
+        setLightsOn(isOn);
+    };
+
     return (
         <div className="w-full h-screen relative">
             <div className="absolute top-4 right-4 z-10 flex gap-2">
@@ -51,12 +55,6 @@ export default function Scene() {
                     className="bg-white/80 hover:bg-white px-4 py-2 rounded-lg shadow-lg transition-colors"
                 >
                     {isFreeForm ? 'Switch to Animated View' : 'Switch to Free View'}
-                </button>
-                <button
-                    onClick={() => setLightsOn(!lightsOn)}
-                    className="bg-white/80 hover:bg-white px-4 py-2 rounded-lg shadow-lg transition-colors"
-                >
-                    {lightsOn ? 'Turn Lights Off' : 'Turn Lights On'}
                 </button>
             </div>
             <Canvas shadows>
@@ -69,7 +67,7 @@ export default function Scene() {
                                 <ambientLight intensity={1.1} />
                             </>
                         )}
-                        <Room />
+                        <Room onLightChange={handleLightChange} lightsOn={lightsOn} />
                     </>
                 ) : (
                     <>
@@ -89,7 +87,7 @@ export default function Scene() {
                                 />
                             </>
                         )}
-                        <Room />
+                        <Room onLightChange={handleLightChange} lightsOn={lightsOn} />
                     </>
                 )}
             </Canvas>

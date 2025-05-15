@@ -1,69 +1,120 @@
 import React, { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { Text } from '@react-three/drei';
 
-const NUM_RAYS = 12;
 const RAY_LENGTH = 1.2;
-const RAY_RADIUS = 0.06;
-const SPHERE_RADIUS = 0.12;
+const RAY_RADIUS = 0.03;
 const CENTER_SPHERE_RADIUS = 0.22;
 const BURST_DISTANCE = 1.2; // How far rays fly toward the camera (z)
+export const SHOOT_DURATION = 5; // seconds
+const RAY_ANIMATION_DURATION = 0.7; // seconds each ray animates outward
+const MAX_RAYS = 200; // Increased from 120 to create more rays
 
-// Generate a color palette (HSL for variety)
-const COLORS = Array.from({ length: NUM_RAYS }, (_, i) => `hsl(${(i * 360) / NUM_RAYS}, 90%, 55%)`);
+// Add type for the onProgress callback
+interface ColorBurstProps {
+    onComplete: () => void;
+    onProgress?: (progress: number) => void;
+}
 
-export function ColorBurst({ onComplete }: { onComplete: () => void }) {
+function getRandomColor() {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 90%, 55%)`;
+}
+
+function easeInCubic(t: number) {
+    return t * t * t;
+}
+
+// Add new easing function for ray acceleration
+function easeInQuad(t: number) {
+    return t * t;
+}
+
+export function ColorBurst({ onComplete, onProgress }: ColorBurstProps) {
     const group = useRef<THREE.Group>(null);
-    const [progress, setProgress] = useState(0);
+    const [rays, setRays] = useState<{
+        angle: number;
+        color: string;
+        spawnTime: number;
+        id: number;
+    }[]>([]);
+    const [startTime] = useState(() => performance.now() / 1000);
+    const [blackoutOpacity, setBlackoutOpacity] = useState(0);
     const calledRef = useRef(false);
+    const rayId = useRef(0);
+    const [progress, setProgress] = useState(0);
 
-    useFrame((_, delta) => {
-        setProgress((p) => {
-            const next = Math.min(p + delta * 2, 1); // 0 to 1 in 0.5s
-            if (next === 1 && onComplete && !calledRef.current) {
-                calledRef.current = true;
-                onComplete();
+    useFrame((state, delta) => {
+        const now = performance.now() / 1000;
+        const elapsed = now - startTime;
+
+        // Update blackout opacity
+        if (elapsed < SHOOT_DURATION) {
+            setBlackoutOpacity(elapsed / SHOOT_DURATION);
+        } else {
+            setBlackoutOpacity(1);
+        }
+
+        if (elapsed < SHOOT_DURATION) {
+            const t = Math.min(elapsed / SHOOT_DURATION, 1);
+            const percentage = Math.floor(t * 100);
+            setProgress(percentage);
+            // Notify about the overall animation progress
+            onProgress?.(t);
+            const expectedCount = Math.floor(MAX_RAYS * easeInCubic(t));
+            if (rays.length < expectedCount) {
+                const newRays: { angle: number; color: string; spawnTime: number; id: number }[] = [];
+                for (let i = rays.length; i < expectedCount; i++) {
+                    newRays.push({
+                        angle: Math.random() * Math.PI * 2,
+                        color: getRandomColor(),
+                        spawnTime: now,
+                        id: rayId.current++,
+                    });
+                }
+                setRays((prev) => [...prev, ...newRays]);
             }
-            return next;
-        });
+        } else if (!calledRef.current && rays.length === 0) {
+            calledRef.current = true;
+            onComplete();
+        }
+
+        setRays((prev) => prev.filter(ray => now - ray.spawnTime < RAY_ANIMATION_DURATION));
     });
 
     return (
         <group ref={group}>
-            {/* Central Sphere */}
-            <mesh position={[0, 0, 0]}>
-                <sphereGeometry args={[CENTER_SPHERE_RADIUS, 32, 32]} />
-                <meshStandardMaterial color={'#fff'} />
-            </mesh>
-
             {/* Rays */}
-            {Array.from({ length: NUM_RAYS }).map((_, i) => {
-                const angle = (i / NUM_RAYS) * Math.PI * 2;
-                // Animate the ray's length and position
+            {rays.map((ray) => {
+                const now = performance.now() / 1000;
+                const rawProgress = Math.min((now - ray.spawnTime) / RAY_ANIMATION_DURATION, 1);
+                // Apply easeInQuad to make rays accelerate as they move
+                const progress = easeInQuad(rawProgress);
                 const length = RAY_LENGTH * progress;
-                // Position: move outward from center
-                const x = Math.cos(angle) * (length / 2 + CENTER_SPHERE_RADIUS);
-                const y = Math.sin(angle) * (length / 2 + CENTER_SPHERE_RADIUS);
+                const x = Math.cos(ray.angle) * (length / 2 + CENTER_SPHERE_RADIUS);
+                const y = Math.sin(ray.angle) * (length / 2 + CENTER_SPHERE_RADIUS);
                 const z = progress * BURST_DISTANCE;
-                // Direction vector from center to current position
                 const dir = new THREE.Vector3(x, y, z).normalize();
-                // Default cylinder in Three.js points up the Y axis, so rotate from (0,1,0) to dir
                 const from = new THREE.Vector3(0, 1, 0);
                 const quaternion = new THREE.Quaternion().setFromUnitVectors(from, dir);
-                // End sphere position
-                const endX = Math.cos(angle) * (length + CENTER_SPHERE_RADIUS);
-                const endY = Math.sin(angle) * (length + CENTER_SPHERE_RADIUS);
-                const endZ = progress * BURST_DISTANCE;
                 return (
-                    <group key={i}>
-                        {/* Cylinder Ray */}
-                        <mesh position={[x, y, z]} quaternion={quaternion}>
-                            <cylinderGeometry args={[RAY_RADIUS, RAY_RADIUS, length, 24]} />
-                            <meshStandardMaterial color={COLORS[i]} />
-                        </mesh>
-                    </group>
+                    <mesh key={ray.id} position={[x, y, z]} quaternion={quaternion}>
+                        <cylinderGeometry args={[RAY_RADIUS, RAY_RADIUS, length, 24]} />
+                        <meshStandardMaterial color={ray.color} />
+                    </mesh>
                 );
             })}
+
+            {/* Blackout Plane */}
+            <mesh position={[0, 0, -0.05]}>
+                <planeGeometry args={[2.8, 1.6]} />
+                <meshStandardMaterial
+                    color={'black'}
+                    transparent
+                    opacity={blackoutOpacity}
+                />
+            </mesh>
         </group>
     );
 } 

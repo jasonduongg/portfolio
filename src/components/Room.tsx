@@ -4,8 +4,15 @@ import { useRef } from 'react';
 import { Group } from 'three';
 import Desk from './Desk';
 import Monitor from './Monitor';
+import Keyboard from './Keyboard';
+import LightSwitch from './LightSwitch';
 
-export default function Room() {
+interface RoomProps {
+    onLightChange?: (isOn: boolean) => void;
+    lightsOn?: boolean;
+}
+
+export default function Room({ onLightChange, lightsOn = true }: RoomProps) {
     const groupRef = useRef<Group>(null);
 
     return (
@@ -24,6 +31,8 @@ export default function Room() {
 
             <Monitor position={[0, -1.1, -1.4]} />
             <Desk />
+            <Keyboard position={[0, -1.4, -0.8]} lightsOn={lightsOn} />
+            <LightSwitch position={[3, -0.75, -1.99]} onLightChange={onLightChange} />
         </group>
     );
 } 
