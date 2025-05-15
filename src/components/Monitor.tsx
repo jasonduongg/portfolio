@@ -128,8 +128,8 @@ function ResumeButton({ position }: { position: [number, number, number] }) {
     const handleResumeClick = () => {
         // Create a link element and trigger download
         const link = document.createElement('a');
-        link.href = '/resume.pdf';
-        link.download = 'Jason_Duong_Resume.pdf';
+        link.href = '/data/jasonduong_software.pdf';
+        link.download = 'jasonduong_software.pdf';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -223,8 +223,8 @@ export default function Monitor({ position = [0, 0, -1] }: MonitorProps) {
             const easedProgress = cameraProgress * cameraProgress; // Quadratic easing for slower start
 
             // Move camera forward and up
-            const targetZ = initialCameraZ.current - (1 * easedProgress);
-            const targetY = initialCameraY.current + (0.15 * easedProgress);
+            const targetZ = initialCameraZ.current - (1.65 * easedProgress);
+            const targetY = initialCameraY.current + (0.25 * easedProgress);
 
             // Slower interpolation
             camera.position.z += (targetZ - camera.position.z) * 0.05;

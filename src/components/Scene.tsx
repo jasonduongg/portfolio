@@ -12,20 +12,20 @@ function CameraAnimation() {
     const cameraRef = useRef<PerspectiveCameraImpl>(null);
     const [startAnimation, setStartAnimation] = useState(true);
     const targetPosition: [number, number, number] = [0, -0.5, 0];
-    const startPosition: [number, number, number] = [0, -0.5, 5]; // Start further back on z-axis
+    const startPosition: [number, number, number] = [0, 0, 3]; // Reduced from 5 to 3 for a shorter pan
 
     useEffect(() => {
-        // Reset animation after 4 seconds (increased from 2)
+        // Reset animation after 4 seconds
         const timer = setTimeout(() => setStartAnimation(false), 4000);
         return () => clearTimeout(timer);
     }, []);
 
     useFrame(() => {
         if (startAnimation && cameraRef.current) {
-            // Faster interpolation (increased from 0.02 to 0.1)
-            cameraRef.current.position.x += (targetPosition[0] - cameraRef.current.position.x) * 0.1;
-            cameraRef.current.position.y += (targetPosition[1] - cameraRef.current.position.y) * 0.1;
-            cameraRef.current.position.z += (targetPosition[2] - cameraRef.current.position.z) * 0.1;
+            // Slower interpolation for smoother pan
+            cameraRef.current.position.x += (targetPosition[0] - cameraRef.current.position.x) * 0.05;
+            cameraRef.current.position.y += (targetPosition[1] - cameraRef.current.position.y) * 0.05;
+            cameraRef.current.position.z += (targetPosition[2] - cameraRef.current.position.z) * 0.05;
         }
     });
 

@@ -1,11 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
-import { Group } from 'three';
+import { useRef, useEffect } from 'react';
+import * as THREE from 'three';
+import { Group, TextureLoader, RepeatWrapping } from 'three';
 import Desk from './Desk';
 import Monitor from './Monitor';
 import Keyboard from './Keyboard';
 import LightSwitch from './LightSwitch';
+import ResumePaper from './ResumePaper';
 
 interface RoomProps {
     onLightChange?: (isOn: boolean) => void;
@@ -15,12 +17,42 @@ interface RoomProps {
 export default function Room({ onLightChange, lightsOn = true }: RoomProps) {
     const groupRef = useRef<Group>(null);
 
+    useEffect(() => {
+        const textureLoader = new TextureLoader();
+
+        // Add error handling for texture loading
+        textureLoader.load(
+            '/textures/wall.jpg',
+            (texture) => {
+                texture.wrapS = texture.wrapT = RepeatWrapping;
+                texture.repeat.set(3, 3);
+
+                if (groupRef.current) {
+                    const backWall = groupRef.current.children.find(
+                        child => child.position.z === -2
+                    ) as THREE.Mesh;
+                    if (backWall) {
+                        const material = backWall.material as THREE.MeshStandardMaterial;
+                        material.map = texture;
+                        material.roughness = 0.5;  // Reduced roughness
+                        material.metalness = 0.0;  // Reduced metalness
+                        material.needsUpdate = true;  // Force material update
+                    }
+                }
+            },
+            undefined,  // onProgress callback
+            (error) => {
+                console.error('Error loading wall texture:', error);
+            }
+        );
+    }, []);
+
     return (
         <group ref={groupRef}>
             {/* Back Wall */}
             <mesh position={[0, 0, -2]} rotation={[0, 0, 0]}>
                 <planeGeometry args={[20, 20]} />
-                <meshStandardMaterial color="#f5f5f5" /> {/* Light gray color for wall */}
+                <meshStandardMaterial color="" /> {/* Dark wood color as base */}
             </mesh>
 
             {/* Floor */}
@@ -33,6 +65,7 @@ export default function Room({ onLightChange, lightsOn = true }: RoomProps) {
             <Desk />
             <Keyboard position={[0, -1.4, -0.8]} lightsOn={lightsOn} />
             <LightSwitch position={[3, -0.75, -1.99]} onLightChange={onLightChange} />
+            <ResumePaper position={[-1.2, -1.4, -0.8]} />
         </group>
     );
 } 

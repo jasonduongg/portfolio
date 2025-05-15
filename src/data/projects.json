@@ -1,0 +1,106 @@
+{
+    "categories": [
+        "web",
+        "mobile",
+        "school"
+    ],
+    "projects": {
+        "school": [
+            {
+                "title": "CS61A: Structure and Interpretation of Computer Programs",
+                "role": "Student Developer",
+                "date": "Spring 2025",
+                "subtitle": "UC Berkeley's introductory computer science course - implementing core programming concepts through projects",
+                "description": "∗ Hog: Developed a strategic dice game implementing probability analysis, game theory, and higher-order functions in Python.\n∗ Ants vs. SomeBees: Created a tower defense game using object-oriented programming, inheritance, and polymorphism with an interactive GUI.\n∗ Cats: Built an autograder system utilizing regular expressions for pattern matching and program generation for test case evaluation.\n∗ Scheme: Implemented a fully functional Scheme interpreter supporting recursion, higher-order functions, and macros with robust parsing."
+            },
+            {
+                "title": "CS61B: Data Structures",
+                "role": "Student Developer",
+                "date": "Fall 2022",
+                "subtitle": "UC Berkeley's data structures course - implementing complex data structures and algorithms",
+                "description": "∗ Gitlet: Built a version control system in Java implementing core Git features including commit trees, branching, merging, and remote repository management.\n∗ 2048: Developed a tile-based game implementing efficient data structures and algorithms for game state management and move validation."
+            },
+            {
+                "title": "CS188: Introduction to Artificial Intelligence",
+                "role": "Student Developer",
+                "date": "Spring 2025",
+                "subtitle": "UC Berkeley's AI course - implementing search algorithms, game-playing agents, and machine learning models",
+                "description": "∗ Project 1: Implemented search algorithms including A*, CSP solvers, and game tree search for Pacman.\n∗ Project 2: Developed multi-agent systems using minimax, alpha-beta pruning, and expectimax algorithms.\n∗ Project 3: Built reinforcement learning agents using MDPs, value iteration, and Q-learning.\n∗ Project 4: Created probabilistic inference models for tracking and localization problems.\n∗ Project 5: Implemented machine learning models including neural networks and decision trees for classification tasks."
+            },
+            {
+                "title": "CS61C: Great Ideas of Computer Architecture",
+                "role": "Student Developer",
+                "date": "Spring 2025",
+                "subtitle": "UC Berkeley's computer architecture course - implementing RISC-V processors and parallel computing",
+                "description": "∗ Project 1: Implemented a RISC-V processor in Logisim, including pipelining and hazard detection.\n∗ Project 2: Developed a matrix multiplication accelerator using C and assembly optimization.\n∗ Project 3: Built a parallel computing system using OpenMP and CUDA for performance optimization.\n∗ Project 4: Created a cache simulator and memory hierarchy optimization system."
+            },
+            {
+                "title": "CS161: Computer Security",
+                "role": "Student Developer",
+                "date": "Spring 2025",
+                "subtitle": "UC Berkeley's computer security course - implementing secure systems and analyzing vulnerabilities",
+                "description": "∗ Project 1: Developed secure memory-safe programs and analyzed vulnerabilities in C programs, including buffer overflows and format string attacks.\n∗ Project 2: Implemented a secure file system with user authentication, file operations, and access control mechanisms.\n∗ Project 3: Built and analyzed secure network protocols, focusing on encryption, authentication, and secure communication.\n∗ Mastered security principles including threat modeling, secure design, and defensive programming techniques."
+            },
+            {
+                "title": "CS168: Computer Networks",
+                "role": "Student Developer",
+                "date": "Spring 2025",
+                "subtitle": "UC Berkeley's computer networks course - implementing network protocols and distributed systems",
+                "description": "∗ Project 1: Implemented a traceroute tool with error handling and network path analysis capabilities.\n∗ Project 2: Developed routing protocols including distance-vector and link-state algorithms for network path optimization.\n∗ Project 3: Built transport layer protocols focusing on reliable data transfer and congestion control.\n∗ Mastered network architecture, protocol design, and distributed systems principles."
+            }
+        ],
+        "web": [
+            {
+                "title": "Curiocity",
+                "role": "Lead Fullstack Software Engineer",
+                "date": "Aug 2024 – Dec 2024",
+                "subtitle": "Collaborative document editing app for financial analysts",
+                "description": "∗ Spearheaded a team of 13 developers to design, develop, and launch a feature-rich document editing app for 25 financial analysts.\n∗ Implemented key features such as resource normalization and parsing, file organization, and advanced search capabilities, enabling seamless document management and retrieval streamlining workflows and reducing document processing time by 50%.\n∗ Adapted to client requests by incorporating new insights and research, ensuring the product met evolving needs for users."
+            },
+            {
+                "title": "BlackPrint",
+                "role": "Frontend Software Engineer",
+                "date": "Jan 2024 – May 2024",
+                "subtitle": "3D geospatial visualization app for real estate analysis",
+                "description": "∗ Engineered a geospatial visualization app using map software to enable 3D semantic segmentation of 1,000+ buildings across various cities, containing property information for real estate agents, enhancing property analysis and decision-making.\n∗ Developed codebase for frontend UI by implementing various components, enhancing maintainability for future scalable updates.\n∗ Improved response time by 30% and increased user traffic by 20% using NextJS routing, NodeJS, and TypeScript."
+            },
+            {
+                "title": "Payload CMS",
+                "role": "Fullstack Software Engineer",
+                "date": "Aug 2023 – Dec 2023",
+                "subtitle": "Open-source content management system with MongoDB integration",
+                "description": "∗ Created a content management system to retrieve files from MongoDB within 100ms, enhancing user experience significantly.\n∗ Led frontend development with TypeScript, ReactJS, and reworked API calls by optimizing query efficiency, restructuring endpoints, and reducing redundant data fetching, resulting in 40% faster file retrieval time and improved system performance.\n∗ Contributed to an open-source CMS project with 200+ contributors and 8.1k+ users, and successfully implemented key updates."
+            },
+            {
+                "title": "Spoak",
+                "role": "Frontend Software Engineer",
+                "date": "Jan 2023 – May 2023",
+                "subtitle": "AI-powered interior design visualization app",
+                "description": "∗ Developed an application showcasing theoretical rooms with furniture generated by AI, including an object removal feature.\n∗ Accelerated client's product development by 25%, introducing an image processing feature and enhancing user engagement.\n∗ Leveraged Tailwind framework to design a responsive frontend for a database-driven application, ensuring scalability and enhanced user interface functionality."
+            },
+            {
+                "title": "UC Berkeley Space Technologies and Rocketry",
+                "role": "Web Engineer",
+                "date": "Aug 2022 – Jan 2023",
+                "subtitle": "Website overhaul and marketing for student rocketry club",
+                "description": "∗ Overhauled the organization's website, refactoring 5,000+ lines of legacy code and creating comprehensive documentation.\n∗ Implemented advanced UI/UX elements using HTML, CSS, and JavaScript, significantly improving user navigation.\n∗ Orchestrated a marketing campaign raising $10,000, increasing club population by 25% through community engagement."
+            },
+            {
+                "title": "Nanotechnology Unleashed (Jadoo Technologies Inc.)",
+                "role": "Fullstack Software Engineer",
+                "date": "Jan 2022 – Dec 2022",
+                "subtitle": "Data visualization tools for nanotechnology research",
+                "description": "∗ Constructed data visualization tools for nanotechnology metrics, adopted by research teams to reduce analysis time by 30%.\n∗ Transformed complex data visualizations into intuitive interfaces utilizing React, streamlining navigation efficiency.\n∗ Built intuitive simulation systems using advanced algorithms, reducing error resolution times from three days to one day."
+            }
+        ],
+        "mobile": [
+            {
+                "title": "Vera",
+                "role": "Fullstack Software Engineer Intern",
+                "date": "Oct 2024 – March 2025",
+                "subtitle": "Mobile app for international cosmetic tourism",
+                "description": "∗ Developed a high-impact platform connecting over 1,000 Korean beauty institutions with global users, integrating real-time chatrooms to facilitate seamless communication and foster a strong, engaged community.\n∗ Conducted beta testing with 150 users, gathering feedback to implement improvements to enhance app functionality.\n∗ Optimized the platform's user interface, improving overall user engagement by 40% through iterative design improvements."
+            }
+        ]
+    }
+}
