@@ -1,10 +1,11 @@
 'use client';
 
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, PerspectiveCamera, SpotLight } from '@react-three/drei';
 import { useRef, useState, useEffect } from 'react';
 import { PerspectiveCamera as PerspectiveCameraImpl } from 'three';
 import type { Vector3 } from 'three';
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Monitor from './Monitor';
 import Room from './Room';
 
@@ -39,19 +40,50 @@ function CameraAnimation() {
     );
 }
 
+function FreeFormCamera() {
+    const { camera, controls } = useThree();
+    const orbitControls = controls as OrbitControlsImpl;
+
+    useEffect(() => {
+        if (orbitControls) {
+            // Configure OrbitControls
+            orbitControls.enableDamping = true;
+            orbitControls.dampingFactor = 0.05;
+            orbitControls.screenSpacePanning = false;
+            orbitControls.minDistance = 1;
+            orbitControls.maxDistance = 20;
+            orbitControls.maxPolarAngle = Math.PI / 2;
+            orbitControls.rotateSpeed = 0.5;
+        }
+    }, [orbitControls]);
+
+    return <OrbitControls makeDefault />;
+}
+
 export default function Scene() {
     const [isFreeForm, setIsFreeForm] = useState(false);
     const [lightsOn, setLightsOn] = useState(true);
+    const cameraRef = useRef<PerspectiveCameraImpl>(null);
 
     const handleLightChange = (isOn: boolean) => {
         setLightsOn(isOn);
+    };
+
+    const handleViewChange = (newIsFreeForm: boolean) => {
+        if (!newIsFreeForm && cameraRef.current) {
+            // Reset camera when switching to animated view
+            cameraRef.current.position.set(0, 0, 3);
+            cameraRef.current.rotation.set(0, 0, 0);
+            cameraRef.current.lookAt(0, 0, 0);
+        }
+        setIsFreeForm(newIsFreeForm);
     };
 
     return (
         <div className="w-full h-screen relative">
             <div className="absolute top-4 right-4 z-10 flex gap-2">
                 <button
-                    onClick={() => setIsFreeForm(!isFreeForm)}
+                    onClick={() => handleViewChange(!isFreeForm)}
                     className="bg-white/80 hover:bg-white px-4 py-2 rounded-lg shadow-lg transition-colors"
                 >
                     {isFreeForm ? 'Switch to Animated View' : 'Switch to Free View'}
@@ -71,7 +103,13 @@ export default function Scene() {
                     </>
                 ) : (
                     <>
-                        <OrbitControls />
+                        <PerspectiveCamera
+                            ref={cameraRef}
+                            makeDefault
+                            position={[0, 0, 3]}
+                            fov={75}
+                        />
+                        <FreeFormCamera />
                         <ambientLight intensity={0.8} />
                         {lightsOn && (
                             <>
