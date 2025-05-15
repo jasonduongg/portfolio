@@ -12,9 +12,10 @@ import ResumePaper from './ResumePaper';
 interface RoomProps {
     onLightChange?: (isOn: boolean) => void;
     lightsOn?: boolean;
+    isFreeForm?: boolean;
 }
 
-export default function Room({ onLightChange, lightsOn = true }: RoomProps) {
+export default function Room({ onLightChange, lightsOn = true, isFreeForm = false }: RoomProps) {
     const groupRef = useRef<Group>(null);
 
     useEffect(() => {
@@ -65,7 +66,7 @@ export default function Room({ onLightChange, lightsOn = true }: RoomProps) {
             <Desk />
             <Keyboard position={[0, -1.4, -0.8]} lightsOn={lightsOn} />
             <LightSwitch position={[3, -0.75, -1.99]} onLightChange={onLightChange} />
-            <ResumePaper position={[-1.2, -1.4, -0.8]} />
+            <ResumePaper position={[-1.2, -1.4, -0.8]} isFreeForm={isFreeForm} />
         </group>
     );
 } 

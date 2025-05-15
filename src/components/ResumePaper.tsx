@@ -6,18 +6,20 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 interface ResumePaperProps {
     position?: [number, number, number];
+    isFreeForm?: boolean;
 }
 
-export default function ResumePaper({ position = [-1.2, -1.4, -0.8] }: ResumePaperProps) {
+export default function ResumePaper({
+    position = [-1.2, -0.8, -0.8],
+    isFreeForm = false
+}: ResumePaperProps) {
     const meshRef = useRef<Mesh>(null);
-    const { camera, controls } = useThree();
+    const { controls } = useThree();
     const orbitControls = controls as OrbitControlsImpl;
     const [isFocused, setIsFocused] = useState(false);
     const [isInitialAnimationComplete, setIsInitialAnimationComplete] = useState(false);
     const originalPosition = useRef(new Vector3(...position));
-    const originalTarget = useRef(new Vector3(0, 0, 0));
-    const targetPosition = new Vector3(0, 0.1, -0.2);
-    const targetCameraPosition = new Vector3(0, 0.1, 0.2);
+    const targetPosition = new Vector3(0, -0.5, -0.40); // Position in front of monitor
     const flatRotation = new Euler(-Math.PI / 2, 0, 0);
     const verticalRotation = new Euler(0, 0, 0);
     const texture = useLoader(TextureLoader, '/data/jasonduong_software.jpg');
@@ -26,46 +28,26 @@ export default function ResumePaper({ position = [-1.2, -1.4, -0.8] }: ResumePap
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsInitialAnimationComplete(true);
-            if (orbitControls) {
-                originalTarget.current.copy(orbitControls.target);
-            }
         }, 4000);
         return () => clearTimeout(timer);
-    }, [orbitControls]);
+    }, []);
 
     useFrame(() => {
-        if (!isInitialAnimationComplete || !orbitControls) return;
+        if (!isInitialAnimationComplete || isFreeForm || !meshRef.current) return;
 
-        if (meshRef.current) {
-            // Use different speeds for focusing and returning
-            const lerpFactor = isFocused ? 0.1 : 0.05;
+        const lerpFactor = 0.1; // Smooth animation speed
+        const targetRot = isFocused ? verticalRotation : flatRotation;
+        const targetPos = isFocused ? targetPosition : originalPosition.current;
 
-            // Smoothly move the paper
-            const targetPos = isFocused ? targetPosition : originalPosition.current;
-            meshRef.current.position.lerp(targetPos, lerpFactor);
-
-            // Smoothly rotate the paper
-            const targetRot = isFocused ? verticalRotation : flatRotation;
-            meshRef.current.rotation.x = MathUtils.lerp(meshRef.current.rotation.x, targetRot.x, lerpFactor);
-            meshRef.current.rotation.y = MathUtils.lerp(meshRef.current.rotation.y, targetRot.y, lerpFactor);
-            meshRef.current.rotation.z = MathUtils.lerp(meshRef.current.rotation.z, targetRot.z, lerpFactor);
-
-            if (isFocused) {
-                // When focused, temporarily disable controls and set camera position
-                orbitControls.enabled = false;
-                camera.position.lerp(targetCameraPosition, lerpFactor);
-                orbitControls.target.set(0, 0.1, -0.2);
-            } else {
-                // When unfocused, re-enable controls and restore original target
-                orbitControls.enabled = true;
-                orbitControls.target.lerp(originalTarget.current, lerpFactor);
-            }
-            orbitControls.update();
-        }
+        // Smoothly move and rotate the paper
+        meshRef.current.position.lerp(targetPos, lerpFactor);
+        meshRef.current.rotation.x = MathUtils.lerp(meshRef.current.rotation.x, targetRot.x, lerpFactor);
+        meshRef.current.rotation.y = MathUtils.lerp(meshRef.current.rotation.y, targetRot.y, lerpFactor);
+        meshRef.current.rotation.z = MathUtils.lerp(meshRef.current.rotation.z, targetRot.z, lerpFactor);
     });
 
     const handleClick = () => {
-        if (!isInitialAnimationComplete) return;
+        if (!isInitialAnimationComplete || isFreeForm) return;
         setIsFocused(!isFocused);
     };
 
@@ -75,14 +57,22 @@ export default function ResumePaper({ position = [-1.2, -1.4, -0.8] }: ResumePap
             position={position}
             rotation={flatRotation}
             onClick={handleClick}
+            onPointerOver={(e) => {
+                if (!isFreeForm && isInitialAnimationComplete) {
+                    document.body.style.cursor = 'pointer';
+                }
+            }}
+            onPointerOut={(e) => {
+                document.body.style.cursor = 'auto';
+            }}
         >
             <planeGeometry args={[0.8, 1.1]} />
             <meshStandardMaterial
                 map={texture}
                 color="#ffffff"
                 emissive="#333333"
-                emissiveIntensity={0.2}
-                roughness={0.4}
+                emissiveIntensity={0.1}
+                roughness={0.3}
                 metalness={0}
             />
         </mesh>

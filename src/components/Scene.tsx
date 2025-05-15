@@ -8,6 +8,7 @@ import type { Vector3 } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import Monitor from './Monitor';
 import Room from './Room';
+import ResumePaper from './ResumePaper';
 
 function CameraAnimation() {
     const cameraRef = useRef<PerspectiveCameraImpl>(null);
@@ -156,7 +157,7 @@ export default function Scene() {
     const [isFreeForm, setIsFreeForm] = useState(false);
     const [lightsOn, setLightsOn] = useState(true);
     const cameraRef = useRef<PerspectiveCameraImpl>(null);
-    const [key, setKey] = useState(0); // Add key to force remount of FreeFormCamera
+    const [key, setKey] = useState(0);
 
     const handleLightChange = (isOn: boolean) => {
         setLightsOn(isOn);
@@ -195,7 +196,7 @@ export default function Scene() {
                                 <ambientLight intensity={1.1} />
                             </>
                         )}
-                        <Room onLightChange={handleLightChange} lightsOn={lightsOn} />
+                        <Room onLightChange={handleLightChange} lightsOn={lightsOn} isFreeForm={isFreeForm} />
                     </>
                 ) : (
                     <>
@@ -221,7 +222,7 @@ export default function Scene() {
                                 />
                             </>
                         )}
-                        <Room onLightChange={handleLightChange} lightsOn={lightsOn} />
+                        <Room onLightChange={handleLightChange} lightsOn={lightsOn} isFreeForm={isFreeForm} />
                     </>
                 )}
             </Canvas>
